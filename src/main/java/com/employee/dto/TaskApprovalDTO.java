@@ -10,8 +10,8 @@ public class TaskApprovalDTO {
 
     private int id;
     private int taskId;
-    private int jobId;
-    private int projectId;
+    private String jobId;
+    private String projectId;
     private String employeeId;
     private String idOfApprovedBy;   //manager Id
     private String emailOfApprovedBy;//manager emailId
@@ -22,11 +22,9 @@ public class TaskApprovalDTO {
     private LocalDateTime createdDateTime;
     private LocalDateTime modifiedDateTime;
     private boolean status=true;
-
     private String projectName;
     private String clientName;
     private String jobName;
-
     private String taskDescription;
     private String billingStatus;
     private  String noOfHoursWorked;

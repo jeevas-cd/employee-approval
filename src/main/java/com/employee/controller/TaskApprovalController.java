@@ -8,32 +8,43 @@ import com.employee.service.TaskApprovalService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-    @RestController
-    @AllArgsConstructor
-    @RequestMapping("api-taskapproval")
-    public class TaskApprovalController {
+import java.util.List;
 
-        private final TaskApprovalService taskApprovalService;
+@RestController
+@AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173/")
 
-        @PostMapping("approvalProcess")
-        public APIResponse approvalProcess(@RequestBody TaskApprovalDTO taskApprovalDTO) {
-            return taskApprovalService.approvalProcess(taskApprovalDTO);
-        }
+@RequestMapping("api-taskapproval")
+public class TaskApprovalController {
 
-        @GetMapping("approvedtask")
-        public APIResponse approvedTask(String employeeId) {
-            return taskApprovalService.getApprovedTask(employeeId);
-        }
+    private final TaskApprovalService taskApprovalService;
 
-        @GetMapping("rejectedtask")
-        public APIResponse rejectedTask(String employeeId) {
-            return taskApprovalService.getRejectedTask(employeeId);
-        }
-        @GetMapping("records")
-        public APIResponse records(String employeeId) {
-            return taskApprovalService.taskRecord(employeeId);
-        }
-
+    @PostMapping("approvalProcess")
+    public APIResponse approvalProcess(@RequestBody List<TaskApprovalDTO> taskApprovalDTO) {
+        return taskApprovalService.approvalProcess(taskApprovalDTO);
     }
+
+    @GetMapping("approvedtask")
+    public APIResponse approvedTask(String employeeId) {
+        return taskApprovalService.getApprovedTask(employeeId);
+    }
+
+    @GetMapping("rejectedtask")
+    public APIResponse rejectedTask(String employeeId) {
+        return taskApprovalService.getRejectedTask(employeeId);
+    }
+    @GetMapping("records")
+    public APIResponse records(String employeeId) {
+        return taskApprovalService.taskRecord(employeeId);
+    }
+
+
+    @PutMapping("updateapprovalprocess")
+    public APIResponse updateApprovalProcess(@RequestBody List<TaskApprovalDTO> taskApprovalDTO) {
+        return taskApprovalService.updateApprovalProcess(taskApprovalDTO);
+    }
+
+}
+
 
 

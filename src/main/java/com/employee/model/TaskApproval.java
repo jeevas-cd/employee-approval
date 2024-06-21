@@ -6,7 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Data;
 
-import java.time.LocalDate;
 @Data
 @Entity
 public class TaskApproval  extends Base{
@@ -21,10 +20,10 @@ public class TaskApproval  extends Base{
     private String employeeId;
 
     @Column(name = "job_id")
-    private int jobId;
+    private String jobId;
 
     @Column(name = "project_id")
-    private int projectId;
+    private String projectId;
 
     @Column(name = "approved_by_id")
     private String idOfApprovedBy;   //manager Id

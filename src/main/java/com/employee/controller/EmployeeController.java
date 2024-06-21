@@ -32,7 +32,7 @@ public class EmployeeController {
   return employeeService.findEmployeeDetails(employeeId);}
 
 
- @GetMapping("/team")
+ @GetMapping("/teamdetail")
  public APIResponse getTeam(@RequestParam String managerId) {
   if (StringUtils.isEmpty(managerId)) {
    throw  new EmployeeServiceException("Manager Id cannot be null", HttpStatus.BAD_REQUEST.value());
@@ -58,6 +58,19 @@ public class EmployeeController {
   }
   return employeeService.activateEmployee(employeeId);
  }
+
+ @GetMapping("/teamid")
+ public APIResponse getTeamId(@RequestParam String managerId) {
+  if (StringUtils.isEmpty(managerId)) {
+   throw  new EmployeeServiceException("Manager Id cannot be null", HttpStatus.BAD_REQUEST.value());
+  }
+  return employeeService.getTeamId(managerId);}
+ @GetMapping("/email-detail")
+ public APIResponse getEmployeeDetailByEmailId(@RequestParam String emailId){
+  if (StringUtils.isEmpty(emailId)) {
+   throw  new EmployeeServiceException(Constants.NULL_ID, HttpStatus.BAD_REQUEST.value());
+  }
+  return employeeService.findEmployeeDetailsByEmailId(emailId);}
 }
 
 

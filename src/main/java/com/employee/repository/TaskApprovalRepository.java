@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface TaskApprovalRepository extends JpaRepository<TaskApproval,Integer> {
 
-    List<TaskApproval> findByEmployeeIDAndTaskStatus(String employeeID ,String taskStatus);
+    List<TaskApproval> findByEmployeeIdAndTaskStatus(String employeeId ,String taskStatus);
     List<TaskApproval> findAllByEmployeeId(String employeeId);
-
+List<TaskApproval> findAllByEmployeeIdIn(List<String> employeeIds);
 
 
 

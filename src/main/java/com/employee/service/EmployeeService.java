@@ -184,9 +184,54 @@ public class EmployeeService {
         }
         return apiResponse;
     }
+    public APIResponse getTeamId(String managerId) {
+        APIResponse apiResponse = new APIResponse();
 
-
+        try {
+            List<String> employees = employeeRepository.findEmployeeIdByPrimaryManagerIdOrSecondaryId(managerId);
+            if (!employees.isEmpty()) {
+                apiResponse.setData(employees);
+                apiResponse.setCode(Constants.SUCCESS_CODE);
+            } else {
+                apiResponse.setData(Collections.emptyList());
+            }
+        } catch (ResourceNotFoundException e) {
+            apiResponse.setCode(HttpStatus.NOT_FOUND.value());
+            apiResponse.setError(e.getMessage());
+        } catch (Exception m) {
+            apiResponse.setCode(Constants.ERROR_CODE);
+            apiResponse.setError("An error occurred while fetching the employee of the manager: " + m.getMessage());
+        }
+        return apiResponse;
     }
+    public APIResponse findEmployeeDetailsByEmailId(String emailID) {
+        APIResponse apiResponse = new APIResponse();
+
+
+        try {
+            Optional<Employee> employeeOptional = employeeRepository.findByEmailIdAndStatus(emailID,Constants.IS_ACTIVE);
+            if (employeeOptional.isPresent()) {
+                ModelMapper mapper = new ModelMapper();
+                EmployeeDTO employeeDTO = mapper.map(employeeOptional, EmployeeDTO.class);
+                apiResponse.setData(employeeDTO);
+                apiResponse.setCode(Constants.SUCCESS_CODE);
+            } else {
+                throw new ResourceNotFoundException(Constants.NOT_FOUND+ emailID);
+            }
+        } catch (ResourceNotFoundException e) {
+            apiResponse.setCode(HttpStatus.NOT_FOUND.value());
+            apiResponse.setError(e.getMessage());
+        } catch (Exception e) {
+            apiResponse.setCode(Constants.ERROR_CODE);
+            apiResponse.setError("An error occurred while fetching the employee: " + e.getMessage());
+        }
+        return apiResponse;
+    }
+
+
+
+}
+
 
 
 

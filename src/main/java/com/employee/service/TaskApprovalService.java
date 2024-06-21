@@ -11,19 +11,21 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.List;
+
+
 @Service
 @AllArgsConstructor
 public class TaskApprovalService {
 
     private final TaskApprovalRepository taskApprovalRepository;
 
-    public APIResponse approvalProcess(TaskApprovalDTO taskApprovalDTO) {
+    public APIResponse approvalProcess(List<TaskApprovalDTO> taskApprovalDTO) {
         APIResponse apiResponse = new APIResponse();
         try {
             ModelMapper modelMapper = new ModelMapper();
-            TaskApproval taskApproval = modelMapper.map(taskApprovalDTO, TaskApproval.class);
+                       List<TaskApproval> taskApproval =taskApprovalDTO.stream().map(list-> modelMapper.map(list, TaskApproval.class)).toList();
             if (taskApproval != null) {
-                TaskApproval savedTaskApproval = taskApprovalRepository.save(taskApproval);
+                List<TaskApproval> savedTaskApproval = taskApprovalRepository.saveAll(taskApproval);
                 apiResponse.setCode(Constants.SUCCESS_CODE);
                 apiResponse.setData(savedTaskApproval);
             } else {
@@ -43,7 +45,7 @@ public class TaskApprovalService {
         APIResponse apiResponse = new APIResponse();
         try {
             ModelMapper modelMapper = new ModelMapper();
-            List<TaskApproval> taskApprovals = taskApprovalRepository.findByEmployeeIDAndTaskStatus(employeeId,Constants.APPROVED_STATUS);
+            List<TaskApproval> taskApprovals = taskApprovalRepository.findByEmployeeIdAndTaskStatus(employeeId,Constants.APPROVED_STATUS);
             if (taskApprovals != null && !taskApprovals.isEmpty()) {
                 List<TaskApprovalDTO> taskApprovalDTOs = taskApprovals.stream()
                         .map(task -> modelMapper.map(task, TaskApprovalDTO.class)).toList();
@@ -66,7 +68,7 @@ public class TaskApprovalService {
         APIResponse apiResponse = new APIResponse();
         try {
             ModelMapper modelMapper = new ModelMapper();
-            List<TaskApproval> taskApprovals = taskApprovalRepository.findByEmployeeIDAndTaskStatus(employeeId ,Constants.REJECTED_STATUS);
+            List<TaskApproval> taskApprovals = taskApprovalRepository.findByEmployeeIdAndTaskStatus(employeeId ,Constants.REJECTED_STATUS);
             if (taskApprovals != null && !taskApprovals.isEmpty()) {
                 List<TaskApprovalDTO> taskApprovalDTOs = taskApprovals.stream()
                         .map(task -> modelMapper.map(task, TaskApprovalDTO.class)).toList();
@@ -107,4 +109,41 @@ public class TaskApprovalService {
         }
         return apiResponse;
     }
-}
+
+    public APIResponse updateApprovalProcess(List<TaskApprovalDTO> taskApprovalDTOs) {
+
+        APIResponse apiResponse = new APIResponse();
+        try {
+            ModelMapper modelMapper = new ModelMapper();
+
+            // Check if all TaskApprovalDTOs have valid IDs
+            for (TaskApprovalDTO dto : taskApprovalDTOs) {
+                if ( !taskApprovalRepository.existsById(dto.getTaskId())) {
+                    approvalProcess(taskApprovalDTOs);
+                }
+                }
+
+
+            // Map DTOs to entities
+            List<TaskApproval> taskApprovals = taskApprovalDTOs.stream()
+                    .map(dto -> modelMapper.map(dto, TaskApproval.class))
+                    .toList();
+
+            // Save the task approvals
+            List<TaskApproval> savedTaskApprovals = taskApprovalRepository.saveAll(taskApprovals);
+            apiResponse.setCode(Constants.SUCCESS_CODE);
+            apiResponse.setData(savedTaskApprovals);
+
+        } catch (IllegalArgumentException e) {
+            apiResponse.setCode(HttpStatus.BAD_REQUEST.value());
+            apiResponse.setError(e.getMessage());
+        } catch (Exception e) {
+            apiResponse.setCode(Constants.ERROR_CODE);
+            apiResponse.setError("Error processing task approval: " + e.getMessage());
+        }
+
+        return apiResponse;
+    }
+    }
+
+
